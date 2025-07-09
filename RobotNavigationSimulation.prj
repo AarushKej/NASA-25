@@ -1,0 +1,164 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration file="C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Final Presentation Master App (V9)\RobotNavigationSimulation.prj" location="C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Final Presentation Master App (V9)" name="RobotNavigationSimulation" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>RobotNavigationSimulation</param.appname>
+    <param.icon />
+    <param.icons />
+    <param.version>1.0</param.version>
+    <param.authnamewatermark>Ian Campbell, Ella Lipscomb, Nicole Jia</param.authnamewatermark>
+    <param.email />
+    <param.company />
+    <param.summary />
+    <param.description />
+    <param.screenshot />
+    <param.guid />
+    <param.installpath.string>\RobotNavigationSimulation\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo />
+    <param.install.notes />
+    <param.target.install.notes />
+    <param.intermediate>C:\Users\igcampbe\Downloads</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\RobotNavigationSimulation\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\RobotNavigationSimulation\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\RobotNavigationSimulation</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
+    <param.create.log>false</param.create.log>
+    <param.log.file />
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text>Syntax 
+	  -? 
+	 
+ Input Arguments 
+	 -?  print help on how to use the application 
+	 input arguments</param.help.text>
+    <unset>
+      <param.icon />
+      <param.icons />
+      <param.version />
+      <param.email />
+      <param.company />
+      <param.summary />
+      <param.description />
+      <param.screenshot />
+      <param.guid />
+      <param.installpath.string />
+      <param.installpath.combo />
+      <param.logo />
+      <param.install.notes />
+      <param.target.install.notes />
+      <param.files.only />
+      <param.output />
+      <param.logdir />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.web.mcr.name />
+      <param.package.mcr.name />
+      <param.no.mcr.name />
+      <param.windows.command.prompt />
+      <param.create.log />
+      <param.log.file />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\AppV9_Master.mlapp</file>
+    </fileset.main>
+    <fileset.resources />
+    <fileset.package />
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\checkcolor.m</file>
+      <file>${PROJECT_ROOT}\createObsNicoleTest.m</file>
+      <file>${PROJECT_ROOT}\createTerrain.m</file>
+      <file>${PROJECT_ROOT}\defaultInputs.m</file>
+      <file>${PROJECT_ROOT}\evaluateReward.m</file>
+      <file>${PROJECT_ROOT}\executeMove.m</file>
+      <file>${PROJECT_ROOT}\getState.m</file>
+      <file>${PROJECT_ROOT}\Images\GreenCircle-removebg-preview.png</file>
+      <file>${PROJECT_ROOT}\Images\polynewnew.png</file>
+      <file>${PROJECT_ROOT}\Images\premier-paints-t60-5-pale-sunflower-paint-color-match-2.jpg</file>
+      <file>${PROJECT_ROOT}\initialize.m</file>
+      <file>${PROJECT_ROOT}\initializeRobot.m</file>
+      <file>${PROJECT_ROOT}\motor.m</file>
+      <file>${PROJECT_ROOT}\moveRobot.m</file>
+      <file>${PROJECT_ROOT}\resetRobot.m</file>
+      <file>${PROJECT_ROOT}\sensorPlotting.m</file>
+      <file>${PROJECT_ROOT}\setObs.m</file>
+      <file>${PROJECT_ROOT}\setSpawn.m</file>
+      <file>${PROJECT_ROOT}\updateLineFollower.m</file>
+      <file>${PROJECT_ROOT}\updatePlot.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="C:\Users\igcampbe\Downloads" name="splash.png" optional="false">C:\Users\igcampbe\Downloads\splash.png</file>
+      <file location="C:\Users\igcampbe\Downloads" name="RobotNavigationSimulation.exe" optional="false">C:\Users\igcampbe\Downloads\RobotNavigationSimulation.exe</file>
+      <file location="C:\Users\igcampbe\Downloads" name="readme.txt" optional="true">C:\Users\igcampbe\Downloads\readme.txt</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2024a</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
