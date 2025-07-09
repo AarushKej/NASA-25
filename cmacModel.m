@@ -71,5 +71,3 @@ qval = qval / length(unique_ad);
 cmac.adMatrix(a,:,:) = ad;
 cmac.sMatrix(a,:,:) = s;
 end
-
-
