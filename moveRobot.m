@@ -31,7 +31,11 @@ diffs = verts - repmat(robot.obj.coords, size(verts, 1), 1);
 dists = diffs(:,1).^2 + diffs(:, 2).^2;
 minDist = sqrt(min(dists));
 robot.distToObj = minDist;
-robot.thetaToObj = 
+robot.thetaToObj = rad2deg(min(atan(diffs(:,2)/diffs(:,1))));
+
+disp(robot.distToObj);
+disp(robot.thetaToObj);
+
 
 %vecnorm(verts-robot.obj.coords,2,2)
 
