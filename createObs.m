@@ -8,35 +8,35 @@ assert(isnumeric(spawnFact),'Invalid obstacle spawn location.')
 assert(spawnLane>0 && spawnLane<=plots.Nlanes,'Invalid obstacle lane location.')
 switch shape
     case 'rect'
-         interior = isinterior(plots.poly.WT, offset(1,1), offset(1,2));
-          if interior
+        interior = isinterior(plots.poly.WT, offset(1,1), offset(1,2));
+        if interior
             poly=nsidedpoly(4,'sidelength',1);
             poly.Vertices=poly.Vertices.*dims;
             dtheta=offset(3);
             assert(isnumeric(offset) && length(offset)==3,'Invalid obstacle offset.')
         else
-             disp("invlaid")
-         end
+             disp("Invalid")
+        end
         
     case 'circ'
-         interior = isinterior(plots.poly.WT, offset(1,1), offset(1,2));
-          if interior
-        nsides=round((2*pi)/(plots.ptspacing/dims));
-        poly=nsidedpoly(nsides,'Radius',dims/2);
-        dtheta=0;
-        assert(isnumeric(offset) && length(offset)==2,'Invalid obstacle offset.')
-         else
-             disp("invlaid")
-         end
+        interior = isinterior(plots.poly.WT, offset(1,1), offset(1,2));
+        if interior
+            nsides=round((2*pi)/(plots.ptspacing/dims));
+            poly=nsidedpoly(nsides,'Radius',dims/2);
+            dtheta=0;
+            assert(isnumeric(offset) && length(offset)==2,'Invalid obstacle offset.')
+        else
+             disp("Invalid")
+        end
     case 'poly'
         interior = isinterior(plots.poly.WT, offset(1,1), offset(1,2));
-          if interior
-        poly=nsidedpoly(dims(1),'Radius',dims(2)/2);
-        dtheta=offset(3);
-        assert(isnumeric(offset) && length(offset)==3,'Invalid obstacle offset.')
+        if interior
+            poly=nsidedpoly(dims(1),'Radius',dims(2)/2);
+            dtheta=offset(3);
+            assert(isnumeric(offset) && length(offset)==3,'Invalid obstacle offset.')
         else
-             disp("invlaid")
-         end
+             disp("Invalid")
+        end
 end
 
 spawnpts_all=robot.spawn.allctrpts{1};

@@ -8,15 +8,15 @@ function inputs = defaultInputs()
    
     inputs.running = false;
     % --- robot --- %
-     inputs.rot.length = 17;
-     inputs.rot.width = 9;
-     % --- q learning --- %
-     inputs.qlearning.learningrate = 0.1;
-     inputs.qlearning.discountrate = 0.3;
-     inputs.qlearning.maxepisodes = 5000;
-     inputs.qlearning.episodes_to_q = 500;
-     inputs.qlearning.epsilonbias = 1;
-     inputs.qlearning.maxsteps = 1000;
+    inputs.rot.length = 17;
+    inputs.rot.width = 9;
+    % --- q learning --- %
+    inputs.qlearning.learningrate = 0.1;
+    inputs.qlearning.discountrate = 0.3;
+    inputs.qlearning.maxepisodes = 5000;
+    inputs.qlearning.episodes_to_q = 500;
+    inputs.qlearning.epsilonbias = 1;
+    inputs.qlearning.maxsteps = 1000;
 
 
     % Robot values
