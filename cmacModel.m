@@ -2,50 +2,52 @@
 % CMAC Approximation of a q function
 % -------------------------------------------------------------------------
 function [cmac, qval] = cmacModel(app, a)
-    cmac= app.cmac;
-    % Initialize arrays with zeros
 
-    % conceptual address
-    s = squeeze(cmac.sMatrix(a,:,:));
-    % actual address in memory
-    ad = squeeze(cmac.adMatrix(a,:,:));
+cmac= app.cmac;
+% Initialize arrays with zeros
 
-    % System Input (Input layer)
-    cmac.pred = 0;
 
-    % Create vector from robot to objective
-    % objX = app.robot.obj.coords(0) - app.robot.center(0);
-    % objY = app.robot.obj.coords(1) - app.robot.center(1);
+% conceptual address
+s = squeeze(cmac.sMatrix(a,:,:));
+% actual address in memory
+ad = squeeze(cmac.adMatrix(a,:,:));
 
-    % predict q-value of  action
-    u = app.robot.sensor.ultrasonic.distances;
+% System Input (Input layer)
+cmac.pred = 0;
 
-    for i =1:1:length(u)
-        if u(i)<cmac.inputRanges(i,1)
-            u(i) = cmac.inputRanges(i,1);
-        end
+% Create vector from robot to objective
+% objX = app.robot.obj.coords(0) - app.robot.center(0);
+% objY = app.robot.obj.coords(1) - app.robot.center(1);
 
-        if u(i)>cmac.inputRanges(i,2)
-            u(i) = cmac.inputRanges(i,2);
-        end
+% predict q-value of  action
+u = app.robot.sensor.ultrasonic.distances;
+
+for i =1:1:length(u)
+    if u(i)<cmac.inputRanges(i,1)
+         u(i) = cmac.inputRanges(i,1);
     end
 
-    % concept mapping and actual mapping
-    % Mapping U --> A
-    % Mapping A --> P (hashing)
+    if u(i)>cmac.inputRanges(i,2)
+        u(i) = cmac.inputRanges(i,2);
+    end
+end
 
-    for d=1:1:cmac.numInputs
-        uMin = cmac.inputRanges(d, 1);
-        uMax = cmac.inputRanges(d, 2);
+% concept mapping and actual mapping
+% Mapping U --> A
+% Mapping A --> P (hashing)
 
-        % iteratates from 1 to the generalization width, meaning input is
-        % mapped to 3 different nearby cells for generalization
-        for i=1:1:cmac.c
-            %Normalizes the input, scales it to a table of size M and rounds
-            s(d,i) = round((u(d)-uMin)*cmac.sensorRes/(uMax-uMin))+i;    % Quantity:U-->A
-            ad(d, i) = mod(s(d,i),cmac.N)+1;                        % Hash transfer:A--> P
-        end
-        % Update the prediction
+for d=1:1:cmac.numInputs
+    uMin = cmac.inputRanges(d, 1);
+    uMax = cmac.inputRanges(d, 2);
+
+    % iteratates from 1 to the generalization width, meaning input is
+    % mapped to 3 different nearby cells for generalization
+    for i=1:1:cmac.c
+        %Normalizes the input, scales it to a table of size M and rounds
+        s(d,i) = round((u(d)-uMin)*cmac.sensorRes/(uMax-uMin))+i;    % Quantity:U-->A
+        ad(d, i) = mod(s(d,i),cmac.N)+1;                        % Hash transfer:A--> P
+    end
+    
 end
 qval = 0;
 

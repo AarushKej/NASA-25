@@ -33,6 +33,7 @@ function rewards = evaluateReward(robot, action)
     if(action == "forward" && distances(3) > 20)
         % was -50
         rewards = rewards +40;
+        
     end
 
     if robot.sensor.prevDistances(3)<distances(3)

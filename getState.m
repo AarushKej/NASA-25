@@ -29,24 +29,23 @@ function stateID = getState(robot, tracksize)
     
    
     % for i = 1:length(sensors)
-    %   if i == 3
-    %       if sensors(i) <= FWD_BLOCKED_THRESHOLD
-    %           state(i) = 1; % 1 state means blocked
-    %       elseif sensors(i) <= FWD_MEDIUM_THRESHOLD && sensors(i) > FWD_BLOCKED_THRESHOLD
-    %           state(i) = 2; % 2 state means the obstacle is medium distance away
-    %       else
-    %           state(i) = 3; % 2 state means the area is clear
-    %           end
-    %       else
-    %           if sensors(i) <= BLOCKED_THRESHOLD
-    %               state(i) = 1; % 1 state means blocked
-    %           elseif sensors(i) <= MEDIUM_THRESHOLD && sensors(i) > BLOCKED_THRESHOLD
-    %               state(i) = 2; % 2 state means the obstacle is medium distance away
-    %           else
-    %               state(i) = 3; % 2 state means the area is clear
-    %           end
-    %       end
-    %   end
+    %     if i == 3
+    %         if sensors(i) <= FWD_BLOCKED_THRESHOLD
+    %         state(i) = 1; % 1 state means blocked
+    %         elseif sensors(i) <= FWD_MEDIUM_THRESHOLD && sensors(i) > FWD_BLOCKED_THRESHOLD
+    %          state(i) = 2; % 2 state means the obstacle is medium distance away
+    %         else
+    %         state(i) = 3; % 2 state means the area is clear
+    %         end
+    %     else
+    %         if sensors(i) <= BLOCKED_THRESHOLD
+    %             state(i) = 1; % 1 state means blocked
+    %         elseif sensors(i) <= MEDIUM_THRESHOLD && sensors(i) > BLOCKED_THRESHOLD
+    %              state(i) = 2; % 2 state means the obstacle is medium distance away
+    %         else
+    %             state(i) = 3; % 2 state means the area is clear
+    %         end
+    %     end
     % end
     
     stateID = robot.statesDict({state});
