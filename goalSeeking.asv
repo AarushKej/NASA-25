@@ -1,0 +1,7 @@
+function [leftSpeed, rightSpeed] = goalSeeking(app)
+
+objX = app.robot.obj.coords(1) - app.robot.center(2);
+objY = app.robot.obj.coords(2) - app.robot.center(2);
+
+
+dist = sqrt((objX).^2 + (objY).^2)
