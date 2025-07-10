@@ -44,7 +44,7 @@ robot.wheels.dims.back=[1.6 6.4];
     robot.obj=struct();
 
     plots.trackAx = app.UIAxes;
-    [robot,plots]=createTerrain(robot,plots,inputs,app.UIAxes);
+    [robot, plots]=createTerrain(robot,plots,inputs,app.UIAxes);
     [robot, plots] = setObjective(robot,plots,0,0,true);
 
     plots.ptspacing=inputs.track.ptspacing;
