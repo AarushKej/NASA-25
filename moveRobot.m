@@ -33,8 +33,7 @@ minDist = sqrt(min(dists));
 robot.distToObj = minDist;
 robot.thetaToObj = rad2deg(min(atan2(diffs(:,1), diffs(:,2))));
 
-disp("distance: " + robot.distToObj);
-disp("angle: " + robot.thetaToObj);
+
 
 
 %vecnorm(verts-robot.obj.coords,2,2)

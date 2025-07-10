@@ -1,7 +1,30 @@
 function [leftSpeed, rightSpeed] = goalSeeking(app)
 
-objX = app.robot.obj.coords(1) - app.robot.center(2);
+objX = app.robot.obj.coords(1) - app.robot.center(1);
 objY = app.robot.obj.coords(2) - app.robot.center(2);
 
 
-dist = sqrt((objX).^2 + (objY).^2)
+dist = sqrt((objX).^2 + (objY).^2);
+theta = rad2deg(atan2(objY, objX));
+
+Kp_dist = 0.001;
+Ki_dist = 0.0;
+Kd_dist = 0.0;
+
+% PID parameters for angle
+Kp_theta = 0.01;
+Ki_theta = 0.0;
+Kd_theta = 0.0;
+
+angleError = theta;
+distError = dist;
+
+forwardSpeed = distError*(Kp_dist);
+turnSpeed = angleError*(Kp_theta);
+
+leftSpeed = forwardSpeed - turnSpeed;
+rightSpeed = forwardSpeed + turnSpeed;
+
+
+
+end

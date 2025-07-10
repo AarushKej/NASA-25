@@ -1,53 +1,66 @@
 function [leftSpeed, rightSpeed] = goalSeeking(app)
 
-objX = app.robot.obj.coords(1) - app.robot.center(1);
-objY = app.robot.obj.coords(2) - app.robot.center(2);
+% Current and goal positions
+robotX = app.robot.center(1);
+robotY = app.robot.center(2);
+objX = app.robot.obj.coords(1);
+objY = app.robot.obj.coords(2);
 
+% PID gains
+Kp = 0.5;
+Ki = 0.0;
+Kd = 0.2;
 
-dist = sqrt((objX).^2 + (objY).^2);
-theta = rad2deg(atan2(objY, objX));
-
-Kp_dist = 0.01;
-Ki_dist = 0.0;
-Kd_dist = 0.0;
-
-% PID parameters for angle
-Kp_theta = 0.01;
-Ki_theta = 0.0;
-Kd_theta = 0.0;
-
-% Persistent errors
-persistent intErrDist intErrTheta prevErrDist prevErrTheta
-if isempty(intErrDist)
-    intErrDist = 0;
-    intErrTheta = 0;
-    prevErrDist = 0;
-    prevErrTheta = 0;
+% Persistent variables
+persistent prevError integralError prevX prevY
+if isempty(prevError)
+    prevError = 0;
+    integralError = 0;
+    prevX = robotX;
+    prevY = robotY;
 end
 
-% Time step (you can make this dynamic)
 dt = 0.1;
 
-% Distance PID
-errDist = dist;
-intErrDist = intErrDist + errDist * dt;
-derErrDist = (errDist - prevErrDist) / dt;
-linearSpeed = Kp_dist * errDist + Ki_dist * intErrDist + Kd_dist * derErrDist;
-prevErrDist = errDist;
+% Estimate heading from movement
+dxPos = robotX - prevX;
+dyPos = robotY - prevY;
+if hypot(dxPos, dyPos) > 1e-4
+    theta = atan2(dyPos, dxPos);
+else
+    theta = 0;  % Default heading
+end
 
-% Theta PID
-errTheta = theta;
-intErrTheta = intErrTheta + errTheta * dt;
-derErrTheta = (errTheta - prevErrTheta) / dt;
-angularSpeed = Kp_theta * errTheta + Ki_theta * intErrTheta + Kd_theta * derErrTheta;
-prevErrTheta = errTheta;
+% Goal vector
+dxGoal = objX - robotX;
+dyGoal = objY - robotY;
+goalAngle = atan2(dyGoal, dxGoal);
 
-% Convert to left/right speeds (simple differential drive model)
-wheelBase = 1;  % Adjust based on robot’s actual wheelbase
-leftSpeed = linearSpeed - (angularSpeed * wheelBase / 2);
-rightSpeed = linearSpeed + (angularSpeed * wheelBase / 2);
+% PID angle control 
+error = atan2(sin(goalAngle - theta), cos(goalAngle - theta));
+integralError = integralError + error * dt;
+derivativeError = (error - prevError) / dt;
+correction = Kp * error + Ki * integralError + Kd * derivativeError;
+prevError = error;
 
-% Clamp speeds between 0 and 3
-leftSpeed = max(0, min(3, leftSpeed));
-rightSpeed = max(0, min(3, rightSpeed));
+% Forward speed and angular correction
+distance = hypot(dxGoal, dyGoal);
+baseSpeed = min(0.5, distance);  % always forward
+
+% Scale angular correction so both speeds stay ≥ 0
+correctionScale = 0.5;  % how much to adjust based on angle error
+leftSpeed = baseSpeed * (1 - correctionScale * correction);
+rightSpeed = baseSpeed * (1 + correctionScale * correction);
+
+% Prevent negative speeds
+leftSpeed = max(leftSpeed, 0);
+rightSpeed = max(rightSpeed, 0);
+
+maxSpeed = 3.0;
+leftSpeed = min(leftSpeed, maxSpeed);
+rightSpeed = min(rightSpeed, maxSpeed);
+
+prevX = robotX;
+prevY = robotY;
+
 end
