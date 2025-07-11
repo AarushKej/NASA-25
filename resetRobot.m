@@ -26,18 +26,15 @@ try
         plots.display.timeelapsed.simT.txt.String=sprintf(['\n\n\n\n\n\n ' datestr(plots.display.timeelapsed.sim/(24*60*60),...
             'MM:SS.FFF')]);
     end
-    [robot.lap.theta.prev,~]=cart2pol(robot.kinematics.axle(1),robot.kinematics.axle(2));
-    robot.lap.theta.prev=mod(robot.lap.theta.prev,2*pi);
-    robot.lap.theta.cur=robot.lap.theta.prev;
-    robot.lap.Nlap=0;
-    robot.lap.theta.total=0;
+
     %plots=updatePlot(robot,plots);
 catch e
+    disp(e);
     if ~isempty(strfind(e.message,'deleted'))
         robot.plot.closed=true;
         return
     else
-        close(plots.trackAx.Parent);
+        %close(plots.trackAx.Parent);
         error(['error: ' e.message]);
     end
 end

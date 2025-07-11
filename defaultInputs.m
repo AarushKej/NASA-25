@@ -2,45 +2,87 @@ function inputs = defaultInputs()
     inputs.ultrasonic.define=[pi/5 3*pi/8 pi/2 5*pi/8 4*pi/5]; % define angles (in radians) of ultrasonic sensors
     inputs.ultrasonic_collisiondist=3; % collision occurs when any sensor distance is <=inputs.ultrasonic_collisiondist
     % when inputs.ultrasonic_collisiondist=0, collision occurs when robot collides with track or obstacles
-    inputs.track.startposition=-.03; % starting position of robot (0<=x<=1)
-    inputs.track.startlane=2; % starting lane of the robot; lanes counted from inside to outside of track
-    
-   
+    inputs.track.startposition=-.03; % starting position of robot (0<=x<=1) 
     inputs.running = false;
-    % --- robot --- %
-     inputs.rot.length = 17;
-     inputs.rot.width = 9;
-     % --- q learning --- %
-     inputs.qlearning.learningrate = 0.1;
-     inputs.qlearning.discountrate = 0.3;
-     inputs.qlearning.maxepisodes = 5000;
-     inputs.qlearning.episodes_to_q = 500;
-     inputs.qlearning.epsilonbias = 1;
-     inputs.qlearning.maxsteps = 1000;
+
+    % Robot Parameters
+    inputs.robot.length = 17;
+    inputs.robot.width = 9;
+    inputs.robot.pow = 3.0;
+    inputs.robot.turnPow = 2.0;
 
 
-    % Robot values
-    inputs.pow = 3.0;
-    inputs.turnPow = 2.0;
-
-    % --- lanes --- %
-    inputs.track.width=60; % track width (cm)
-    inputs.track.Nlanes=3; % number of lanes
-    inputs.track.lanelines=true; % show/hide lines between lanes
-   
-    inputs.colors.track.WT=[237 242 245]/255;
-    
-    
     % --- track design --- %
     % (all spatial dimensions in cm)
     inputs.track.innerradius=40; % inner radius of track
     inputs.track.LFlinethickness=2.5; % thickness of line-follower line
     inputs.track.showLFline=false; % show/hide line-follower line
     inputs.track.wallthickness=3; % wall thickness
-    inputs.track.wall1_length=300; % length of wall 1 (y-axis wall)
-    inputs.track.wall2_length=300; % length of wall 2 (x-axis wall)
-    inputs.track.ptspacing=1; % linear dist. between points along track curve (also applied to circ. obstacles)
+    inputs.track.wall1_length=400; % length of wall 1 (y-axis wall)
+    inputs.track.wall2_length=400; % length of wall 2 (x-axis wall)
+    inputs.track.ptspacing=3; % linear dist. between points along track curve (also applied to circ. obstacles)
     % smaller values will result in a higher-resolution track and may cause slower track generation and decreased FPS
+    
+
+    % Simulation Parameters
+    inputs.sim.maxepisodes = 5000;
+    inputs.sim.episodesUntilQ = 250; % episodes until all decisions are greedy
+    inputs.sim.epsilonbias = 1;
+    inputs.sim.maxsteps = 1000;
+
+    
+    % Learning parameters
+    inputs.cmac.alpha = 0.07;
+    inputs.cmac.gamma = 0.92;
+    inputs.cmac.beta = 0.3;
+    inputs.cmac.c = 3; % inputs are generalized to c adjacent cells
+    inputs.cmac.numInputs = 8;
+
+    numActions = 3;
+
+    % set number of bins for each type of input
+    inputs.cmac.sensorRes = 5;
+    inputs.cmac.headingRes = 12; 
+    inputs.cmac.distanceRes = 4;
+
+    inputs.cmac.inputBins = zeros(1, inputs.cmac.numInputs);
+    inputs.cmac.inputBins(1:5) = inputs.cmac.sensorRes;
+    inputs.cmac.inputBins(6) = inputs.cmac.distanceRes;
+    inputs.cmac.inputBins(7:8) = inputs.cmac.headingRes;
+    
+    % sensor range limit
+    inputs.cmac.rangeMax = 70;
+    
+    inputs.cmac.inputRanges = repmat([0 inputs.cmac.rangeMax], 5, 1);
+    % max distance from objective is norm of track dims
+    inputs.cmac.inputRanges = [inputs.cmac.inputRanges;[0, norm([inputs.track.wall1_length, inputs.track.wall2_length])]];
+    % min/max difference in heading from robot to obstacle
+    inputs.cmac.inputRanges= [inputs.cmac.inputRanges;[-1, 1]];
+    inputs.cmac.inputRanges= [inputs.cmac.inputRanges;[-1, 1]];
+    
+    % number of actual memory addresses
+    inputs.cmac.N = 50000; %round(0.05 * inputs.cmac.sensorRes ^ inputs.cmac.numInputs);
+    
+    numActions = 3;
+
+
+inputs.cmac.wMatrix = zeros(numActions, inputs.cmac.N);
+inputs.cmac.adMatrix = zeros(numActions, inputs.cmac.numInputs, inputs.cmac.c);
+inputs.cmac.sMatrix = zeros(numActions, inputs.cmac.numInputs, inputs.cmac.c);
+
+inputs.cmac.w_1 = zeros(numActions, inputs.cmac.N);
+inputs.cmac.w_2= zeros(numActions, inputs.cmac.N);
+inputs.cmac.d_w= zeros(numActions, inputs.cmac.N);
+
+
+inputs.cmac.y_1 = zeros(numActions,1);
+inputs.cmac.u_1 = zeros(numActions,1);
+  
+    
+    
+    
+    
+    
     
     %%%%% Display inputs %%%%%
     inputs.display.showsensordata=false; % show/hide plot of data from sensors (hiding plot may increase FPS)
@@ -67,5 +109,6 @@ function inputs = defaultInputs()
     inputs.colors.robot.LF_Trigger='g'; % line-follower triggered color
     inputs.colors.ultrasonic.sensorcolors={[162 232 160]/255,[255 74 71]/255,[196 106 252]/255,[255 198 92]/255,[160 232 221]/255};
     inputs.colors.ultrasonic.linestyle='-';
+    inputs.colors.track.WT=[237 242 245]/255;
 
 end

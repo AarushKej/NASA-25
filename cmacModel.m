@@ -1,69 +1,71 @@
 % -------------------------------------------------------------------------
 % CMAC Approximation of a q function
 % -------------------------------------------------------------------------
-function [cmac, qval] = cmacModel(app, a)
+function [cmac, qvals] = cmacModel(app)
 
 cmac= app.cmac;
 % Initialize arrays with zeros
-
-% conceptual address
-s = squeeze(cmac.sMatrix(a,:,:));
-% actual address in memory
-ad = squeeze(cmac.adMatrix(a,:,:));
-
-% System Input (Input layer)
 cmac.pred = 0;
 
-% Create vector from robot to objective
-% objX = app.robot.obj.coords(0) - app.robot.center(0);
-% objY = app.robot.obj.coords(1) - app.robot.center(1);
-
-% predict q-value of  action
+% System Input (Input layer)
 u = app.robot.sensor.ultrasonic.distances;
 
-for i =1:1:length(u)
-    if u(i)<cmac.inputRanges(i,1)
-        u(i) = cmac.inputRanges(i,1);
-    end
+% Create vector from robot to objective
+objX = app.robot.obj.x - app.robot.center(1);
+objY = app.robot.obj.y - app.robot.center(2);
+dist = norm(objX, objY);
+u(end+1) = dist;
 
-    if u(i)>cmac.inputRanges(i,2)
-        u(i) = cmac.inputRanges(i,2);
-    end
-end
+
+% calculate angle between robot's heading and obstacle
+robDir = app.robot.kinematics.theta;
+objDir = atan2(objY, objX);
+%headingDiff = wrapToPi(objDir - robDir);
+headingDiff = objDir - robDir;
+
+% two heading inputs
+% using cos and sin allows continuity as the angle moves past 180
+app.robot.headingError = [cos(headingDiff), sin(headingDiff)];
+u(end+1) = app.robot.headingError(1);
+u(end+1) = app.robot.headingError(2);
+app.robot.headingDiff = headingDiff;
+
+
+% clamp input values to input range;
+u = min(max(u, cmac.inputRanges(:,1)), cmac.inputRanges(:,2));
+
 
 % concept mapping and actual mapping
 % Mapping U --> A
 % Mapping A --> P (hashing)
 
-for d=1:1:cmac.numInputs
-    uMin = cmac.inputRanges(d, 1);
-    uMax = cmac.inputRanges(d, 2);
+uMin = cmac.inputRanges(:,1);
+uMax = cmac.inputRanges(:,2);
 
-    % iteratates from 1 to the generalization width, meaning input is
-    % mapped to 3 different nearby cells for generalization
-    for i=1:1:cmac.c
-        %Normalizes the input, scales it to a table of size M and rounds
-        s(d,i) = round((u(d)-uMin)*cmac.sensorRes/(uMax-uMin))+i;    % Quantity:U-->A
-        ad(d, i) = mod(s(d,i),cmac.N)+1;                        % Hash transfer:A--> P
-    end 
-end
-qval = 0;
+%normalize input vals
+normalU = (u - uMin)./(uMax-uMin);
 
-% Output calculation
-% for j = 1:1:cmac.numInputs
-%     for i=1:1:cmac.c
-%         qval = qval + cmac.wMatrix(a, ad(j,i));
-%     end
-% end
-% qval = qval / (cmac.numInputs * cmac.c);
+%quantize inputs into bins
+binnedU = round(normalU .* cmac.inputBins');
 
-% replaced the above with a calculation that removes duplicate ad's
+%create offsets matrix
+offsets = repmat(1:cmac.c, cmac.numInputs,1);
+
+%add offsets to quantized inputs to create generalized conceptual addresses
+s = repmat(binnedU, 1,cmac.c) + offsets;
+
+%hash conceptual addresses to get real addresses
+ad = mod(s, cmac.N) + 1;
+
+
 unique_ad = unique(ad(:));
-for i = 1:length(unique_ad)
-    qval = qval + cmac.wMatrix(a, unique_ad(i));
-end
-qval = qval / length(unique_ad);
+qvals = zeros(1,app.robot.numActions);
 
-cmac.adMatrix(a,:,:) = ad;
-cmac.sMatrix(a,:,:) = s;
+for a = 1:1:app.robot.numActions
+    cmac.sMatrix(a, :, :) = s;
+    cmac.adMatrix(a, :, :) = ad;
+    qvals(a) = sum(cmac.wMatrix(a, unique_ad)) / length(unique_ad);
 end
+end
+
+

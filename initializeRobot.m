@@ -68,7 +68,8 @@ function [robot,plots] = initializeRobot(robot,plots,Inputs)
         [robot_body_all(:,2)' robot.wheels.backleft.y robot.wheels.backright.y  robot.sensor.linefollower.left.y...
         robot.sensor.linefollower.right.y]'];
     
-    robot=setSpawn(robot,plots,Inputs.track.startlane,Inputs.track.startposition,false);
+
+    robot=setSpawn(robot,plots,0,0,false);
     robot.center=robot.spawn.origin;
     robot.kinematics.axle=robot.spawn.axle;
     robot.kinematics.theta=robot.spawn.heading;

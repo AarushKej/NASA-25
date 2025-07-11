@@ -1,8 +1,11 @@
 function [robot, plots]=setObjective(robot,plots,xval,yval,isrand)
 assert(islogical(isrand),'Random spawn must be ''true'' or ''false''.')
-buffer = 10;
-robot.obj.radius = 10;
+robot.obj.radius = 18;
 radius = robot.obj.radius;
+
+
+% don't spawn too close to track walls
+buffer = 2*radius;
 objColor = 'yellow';
 
 if isrand
@@ -28,7 +31,7 @@ for i=1:imax
     robot.obj.x=xval;
     robot.obj.y=yval;
     robot.obj.coords = [robot.obj.x,robot.obj.y];
-    pos = [xval, yval, radius*2, radius*2];
+    pos = [xval-radius, yval-radius, radius*2, radius*2];
     robot.obj.poly = rectangle(plots.trackAx,'Position',pos,'Curvature',[1 1],'FaceColor',objColor);
 
     % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);
