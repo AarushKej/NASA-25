@@ -1,11 +1,7 @@
 function [robot, plots]=setObjective(robot,plots,xval,yval,isrand)
 assert(islogical(isrand),'Random spawn must be ''true'' or ''false''.')
-robot.obj.radius = 18;
-radius = robot.obj.radius;
-
-
-% don't spawn too close to track walls
-buffer = 2*radius;
+buffer = 10;
+radius = 10;
 objColor = 'yellow';
 
 if isrand
@@ -14,9 +10,9 @@ if isrand
 end
 
 maxattempt=10;
-if isfield(robot.obj,'coords')
-    xval_init=robot.obj.coords(0);
-    yval_init=robot.obj.coords(1);
+if isfield(robot.obj,'factor')
+    xval_init=robot.obj.X;
+    yval_init=robot.obj.Y;
     imax=maxattempt+1;
 else
     imax=1;
@@ -31,8 +27,8 @@ for i=1:imax
     robot.obj.x=xval;
     robot.obj.y=yval;
     robot.obj.coords = [robot.obj.x,robot.obj.y];
-    pos = [xval-radius, yval-radius, radius*2, radius*2];
-    robot.obj.poly = rectangle(plots.trackAx,'Position',pos,'Curvature',[1 1],'FaceColor',objColor);
+    pos = [xval, yval, radius*2, radius*2];
+    robot.obj.poly = rectangle('Position',pos,'Curvature',[1 1],'FaceColor','yellow');
 
     % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);
     % robot.spawn.heading=robot.spawn.allctrpts{spawnLane}(startingidx,3);
@@ -41,17 +37,17 @@ for i=1:imax
     % 
     % robot.obj.axle=rotz_fun(0,-(robot.dims(2)/2)+(robot.wheels.dims.back(2)/2),robot.obj.heading,robot.obj.origin);
     % 
-    % if ~any(isinterior(plots.poly.track,robot.obj.patchpts))
-    %     break
-    % elseif i==1 && ~isrand
-    %     warning('Obstacle location causes collision.')
-    %     break
-    % elseif i==maxattempt+1 && isrand
-    %     warning('Could not locate random spawn location without collision. Defaulting to initial values.')
-    % elseif isrand
-    %     xval =(rand-.5) * (plots.trackWidth - buffer);
-    %     yval =(rand - .5) * (plots.trackWidth-buffer);
-    % end
+    if ~any(isinterior(plots.poly.track,robot.obj.patchpts))
+        break
+    elseif i==1 && ~isrand
+        warning('Obstacle location causes collision.')
+        break
+    elseif i==maxattempt+1 && isrand
+        warning('Could not locate random spawn location without collision. Defaulting to initial values.')
+    elseif isrand
+        xval =(rand-.5) * (plots.trackWidth - buffer);
+        yval =(rand - .5) * (plots.trackWidth-buffer);
+    end
 end
 
 

@@ -38,33 +38,61 @@ u = min(max(u, cmac.inputRanges(:,1)), cmac.inputRanges(:,2));
 % concept mapping and actual mapping
 % Mapping U --> A
 % Mapping A --> P (hashing)
+qvals = zeros(1,app.robot.numActions);
 
+
+% 
 uMin = cmac.inputRanges(:,1);
 uMax = cmac.inputRanges(:,2);
 
-%normalize input vals
 normalU = (u - uMin)./(uMax-uMin);
 
-%quantize inputs into bins
 binnedU = round(normalU .* cmac.inputBins');
 
-%create offsets matrix
 offsets = repmat(1:cmac.c, cmac.numInputs,1);
 
-%add offsets to quantized inputs to create generalized conceptual addresses
-s = repmat(binnedU, 1,cmac.c) + offsets;
+s = repmat(binnedU, 1,3) + offsets;
 
-%hash conceptual addresses to get real addresses
+
 ad = mod(s, cmac.N) + 1;
 
 
-unique_ad = unique(ad(:));
-qvals = zeros(1,app.robot.numActions);
+for a = 1:1:app.robot.numActions
+
+
+
 
 for a = 1:1:app.robot.numActions
-    cmac.sMatrix(a, :, :) = s;
-    cmac.adMatrix(a, :, :) = ad;
-    qvals(a) = sum(cmac.wMatrix(a, unique_ad)) / length(unique_ad);
+    % initialize memory addresses - s is conceptual and ad is actual
+    s = zeros(cmac.numInputs, cmac.c);
+    ad = zeros(cmac.numInputs, cmac.c);
+    
+
+    for d=1:1:cmac.numInputs
+        uMin = cmac.inputRanges(d, 1);
+        uMax = cmac.inputRanges(d, 2);
+    
+        % iteratates from 1 to the generalization width, meaning input is
+        % mapped to c different nearby cells for generalization
+        for i=1:1:cmac.c
+            %Normalizes the input, scales it to a table of size M and rounds
+            s(d,i) = round((u(d)-uMin)*cmac.inputBins(d)/(uMax-uMin))+i;    % Quantity:U-->A
+            ad(d, i) = mod(s(d,i),cmac.N)+1;                        % Hash transfer:A--> P
+        end
+        
+    end
+    
+    % create output vector
+
+    unique_ad = unique(ad(:));
+    for i = 1:length(unique_ad)
+        qvals(a) = qvals(a) + cmac.wMatrix(a, unique_ad(i));
+    end
+    qvals(a) = qvals(a) / length(unique_ad);
+    
+    % store addresses for use in updating model
+    cmac.adMatrix(a,:,:) = ad;
+    cmac.sMatrix(a,:,:) = s;
 end
 end
 

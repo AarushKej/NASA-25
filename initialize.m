@@ -4,30 +4,26 @@ plots = app.plots;
 sim = app.sim;
 inputs = app.inputs;
 sim.episode = 0;
+X = app.X;
+Y = app.Y;
+Rand = app.Rand;
+
+
 
 
 % Create state combinations dictionary: state -> stateId, e.g. [1 3 2 4 1] -> 17  
 robot.numSensors = 5;
-robot.numStates = app.NumberofStatesEditField.Value;
 
-n = robot.numStates^robot.numSensors;
-states = 1:robot.numStates;
-combos = table2array(combinations(states,states,states,states,states));
-robot.statesDict = dictionary;
-for i = 1:n
-    robot.statesDict({[combos(i, :)]}) = i;
-end
 
 robot.actions = ["forward", "left", "right"];
-if(~sim.qmatrix) % Basically if not already created/imported
-    sim.qmatrix = rand(length(robot.statesDict.keys),3);
-end
+robot.numActions = length(robot.actions);
+
 
 robot.dims=[9 17];
 robot.wheels.dims.back=[1.6 6.4];
 % if initial
-    robot.dims(1,1) = inputs.rot.width;
-    robot.dims(1,2) = inputs.rot.length;
+    robot.dims(1,1) = inputs.robot.width;
+    robot.dims(1,2) = inputs.robot.length;
     errorcheck(inputs,robot);
     robot.sensor.ultrasonic.sensorcolors=inputs.colors.ultrasonic.sensorcolors;
     robot.reset=inputs.resetRobot;
@@ -45,11 +41,10 @@ robot.wheels.dims.back=[1.6 6.4];
 
     plots.trackAx = app.UIAxes;
     [robot,plots]=createTerrain(robot,plots,inputs,app.UIAxes);
-    [robot, plots] = setObjective(robot,plots,0,0,true);
+    [robot, plots] = setObjective(robot,plots,X,Y,Rand);
 
     plots.ptspacing=inputs.track.ptspacing;
     robot.crashed=false;
-    robot.track.width=inputs.track.width;
     robot.kinematics.dt=inputs.dt;
 
 
@@ -64,6 +59,9 @@ robot.wheels.dims.back=[1.6 6.4];
     
 
     [robot,plots] = initializeRobot(robot,plots,inputs);
+
+    robot.objDist = norm(robot.obj.coords - robot.center);
+    robot.prevObjDist = robot.objDist;
 
     % if plots.plotsensordata
     %     plots.mapping.plts.sensordata=plot(plots.mappingAx,plots.mapping.sensordata(1:robot.sensor.ultrasonic.Nsensors,1),...
@@ -161,27 +159,21 @@ robot.wheels.dims.back=[1.6 6.4];
     % end
 % end
 
-[robot.lap.theta.prev,~]=cart2pol(robot.kinematics.axle(1),robot.kinematics.axle(2));
-robot.lap.theta.prev=mod(robot.lap.theta.prev,2*pi);
-robot.lap.theta.cur=robot.lap.theta.prev;
-robot.lap.Nlap=0;
-robot.lap.theta.total=0;
+
 end
 
 
 function errorcheck(inputs,robot)
 assert(inputs.ultrasonic_collisiondist>=0,'''inputs.ultrasonic_collision'' must be >=0')
 assert(inputs.track.ptspacing>0,'''inputs.track.ptspacing'' must be >0');
-assert(inputs.track.Nlanes>=2 && round(inputs.track.Nlanes)==inputs.track.Nlanes,'''Nlanes'' must be a positive integer >=2.')
-assert(inputs.track.startlane<=inputs.track.Nlanes && inputs.track.startlane>=1 && round(inputs.track.startlane)==inputs.track.startlane,...
-    '''startlane'' must be a positive integer between 1 and Nlanes.')
+
+
 assert(inputs.track.wall1_length>=0 && inputs.track.wall2_length>=0,'''wall1_length'' and ''wall2_length'' must be >0.')
-assert(inputs.track.innerradius>=0,'''innerradius'' must be >=0')
-assert(inputs.track.width>=max(robot.dims),'track width must be >= robot width');
+
 
 assert(inputs.display.Zoom>0,'''Zoom'' must be >0')
 assert(inputs.realtime || inputs.dt>0,'''dt'' must be >0')
-assert(islogical(inputs.track.lanelines),'''lanelines'' must be true or false.')
+
 assert(islogical(inputs.track.showLFline),'''showLFline'' must be true or false.')
 
 assert(islogical(inputs.display.showsensordata),'''showsensordata'' must be true or false.')

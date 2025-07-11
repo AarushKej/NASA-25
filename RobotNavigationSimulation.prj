@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration file="C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Final Presentation Master App (V9)\RobotNavigationSimulation.prj" location="C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Final Presentation Master App (V9)" name="RobotNavigationSimulation" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration file="C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Spring 2025 CMAC\V5 - Obstacle Avoidance\RobotNavigationSimulation.prj" location="C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Spring 2025 CMAC\V5 - Obstacle Avoidance" name="RobotNavigationSimulation" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>RobotNavigationSimulation</param.appname>
     <param.icon />
     <param.icons />
@@ -16,7 +16,7 @@
     <param.logo />
     <param.install.notes />
     <param.target.install.notes />
-    <param.intermediate>C:\Users\igcampbe\Downloads</param.intermediate>
+    <param.intermediate>${PROJECT_ROOT}\RobotNavigationSimulation\for_testing</param.intermediate>
     <param.files.only>${PROJECT_ROOT}\RobotNavigationSimulation\for_redistribution_files_only</param.files.only>
     <param.output>${PROJECT_ROOT}\RobotNavigationSimulation\for_redistribution</param.output>
     <param.logdir>${PROJECT_ROOT}\RobotNavigationSimulation</param.logdir>
@@ -57,6 +57,7 @@
       <param.logo />
       <param.install.notes />
       <param.target.install.notes />
+      <param.intermediate />
       <param.files.only />
       <param.output />
       <param.logdir />
@@ -78,18 +79,18 @@
       <param.example />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}\AppV9_Master.mlapp</file>
+      <file>${PROJECT_ROOT}\V5_Ian.mlapp</file>
     </fileset.main>
     <fileset.resources />
     <fileset.package />
     <fileset.depfun>
       <file>${PROJECT_ROOT}\checkcolor.m</file>
-      <file>${PROJECT_ROOT}\createObsNicoleTest.m</file>
+      <file>${PROJECT_ROOT}\cmacModel.m</file>
+      <file>${PROJECT_ROOT}\createObs.m</file>
       <file>${PROJECT_ROOT}\createTerrain.m</file>
       <file>${PROJECT_ROOT}\defaultInputs.m</file>
       <file>${PROJECT_ROOT}\evaluateReward.m</file>
       <file>${PROJECT_ROOT}\executeMove.m</file>
-      <file>${PROJECT_ROOT}\getState.m</file>
       <file>${PROJECT_ROOT}\Images\GreenCircle-removebg-preview.png</file>
       <file>${PROJECT_ROOT}\Images\polynewnew.png</file>
       <file>${PROJECT_ROOT}\Images\premier-paints-t60-5-pale-sunflower-paint-color-match-2.jpg</file>
@@ -99,19 +100,21 @@
       <file>${PROJECT_ROOT}\moveRobot.m</file>
       <file>${PROJECT_ROOT}\resetRobot.m</file>
       <file>${PROJECT_ROOT}\sensorPlotting.m</file>
+      <file>${PROJECT_ROOT}\setObjective.m</file>
       <file>${PROJECT_ROOT}\setObs.m</file>
       <file>${PROJECT_ROOT}\setSpawn.m</file>
+      <file>${PROJECT_ROOT}\updateCmac.m</file>
       <file>${PROJECT_ROOT}\updateLineFollower.m</file>
       <file>${PROJECT_ROOT}\updatePlot.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="C:\Users\igcampbe\Downloads" name="splash.png" optional="false">C:\Users\igcampbe\Downloads\splash.png</file>
-      <file location="C:\Users\igcampbe\Downloads" name="RobotNavigationSimulation.exe" optional="false">C:\Users\igcampbe\Downloads\RobotNavigationSimulation.exe</file>
-      <file location="C:\Users\igcampbe\Downloads" name="readme.txt" optional="true">C:\Users\igcampbe\Downloads\readme.txt</file>
+      <file location="${PROJECT_ROOT}\RobotNavigationSimulation\for_testing" name="splash.png" optional="false">C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Spring 2025 CMAC\V5 - Obstacle Avoidance\RobotNavigationSimulation\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\RobotNavigationSimulation\for_testing" name="RobotNavigationSimulation.exe" optional="false">C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Spring 2025 CMAC\V5 - Obstacle Avoidance\RobotNavigationSimulation\for_testing\RobotNavigationSimulation.exe</file>
+      <file location="${PROJECT_ROOT}\RobotNavigationSimulation\for_testing" name="readme.txt" optional="true">C:\Users\igcampbe\MATLAB Drive\Robot Navigation and Simulation Project\Spring 2025 CMAC\V5 - Obstacle Avoidance\RobotNavigationSimulation\for_testing\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Program Files\MATLAB\R2024a</root>
+      <root>C:\Program Files\MATLAB\R2024b</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
         <toolbox name="embeddedcoder" />
