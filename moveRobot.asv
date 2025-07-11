@@ -26,15 +26,26 @@ if any(isinterior(plots.poly.track,verts)) ||...
     robot.crashed = true;
 end
 
+
+disp(verts)
 % find the minimum distance any point of the robot is from the objective
 diffs = verts - repmat(robot.obj.coords, size(verts, 1), 1);
 dists = diffs(:,1).^2 + diffs(:, 2).^2;
 minDist = sqrt(min(dists));
 robot.distToObj = minDist;
-robot.thetaToObj = rad2deg(min(atan(diffs(:,2)/diffs(:,1))));
 
-disp("distance: " + robot.distToObj);
-disp("angle: " + robot.thetaToObj);
+
+robotX = app.robot.center(1);
+robotY = app.robot.center(2);
+objX = app.robot.obj.coords(1);
+objY = app.robot.obj.coords(2);
+
+dxGoal = objX - robotX;
+dyGoal = objY - robotY;
+
+distance = hypot(dxGoal, dyGoal);
+
+
 
 
 %vecnorm(verts-robot.obj.coords,2,2)

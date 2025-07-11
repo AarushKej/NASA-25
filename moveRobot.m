@@ -26,12 +26,13 @@ if any(isinterior(plots.poly.track,verts)) ||...
     robot.crashed = true;
 end
 
+
 % find the minimum distance any point of the robot is from the objective
 diffs = verts - repmat(robot.obj.coords, size(verts, 1), 1);
 dists = diffs(:,1).^2 + diffs(:, 2).^2;
 minDist = sqrt(min(dists));
 robot.distToObj = minDist;
-robot.thetaToObj = rad2deg(min(atan2(diffs(:,1), diffs(:,2))));
+
 
 
 
@@ -40,7 +41,7 @@ robot.thetaToObj = rad2deg(min(atan2(diffs(:,1), diffs(:,2))));
 
 % if the minimum distance is less than the radius of the obj, it intersects
 robot.arrived = false;
-if minDist < robot.obj.radius
+if minDist < robot.obj.radius + 5
     robot.arrived = true;
 end
 

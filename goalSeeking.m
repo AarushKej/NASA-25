@@ -7,9 +7,9 @@ objX = app.robot.obj.coords(1);
 objY = app.robot.obj.coords(2);
 
 % PID gains
-Kp = 0.5;
-Ki = 0.0;
-Kd = 0.2;
+Kp = 0.09;
+Ki = 0.0001;
+Kd = 0.008;
 
 % Persistent variables
 persistent prevError integralError prevX prevY
@@ -45,10 +45,10 @@ prevError = error;
 
 % Forward speed and angular correction
 distance = hypot(dxGoal, dyGoal);
-baseSpeed = min(0.5, distance);  % always forward
+baseSpeed = min(1, distance);  % always forward
 
 % Scale angular correction so both speeds stay ≥ 0
-correctionScale = 0.5;  % how much to adjust based on angle error
+correctionScale = 0.7;  % how much to adjust based on angle error
 leftSpeed = baseSpeed * (1 - correctionScale * correction);
 rightSpeed = baseSpeed * (1 + correctionScale * correction);
 
@@ -56,7 +56,7 @@ rightSpeed = baseSpeed * (1 + correctionScale * correction);
 leftSpeed = max(leftSpeed, 0);
 rightSpeed = max(rightSpeed, 0);
 
-maxSpeed = 3.0;
+maxSpeed = 5.0;
 leftSpeed = min(leftSpeed, maxSpeed);
 rightSpeed = min(rightSpeed, maxSpeed);
 
