@@ -31,9 +31,17 @@ for i=1:imax
     theta = 2 * pi * rand;
     robot.spawn.heading = theta;
  else 
-     disp("Hi!")
-     disp(robot.spawn.heading)%THIS IS THE ISSUE DO NOT FORGET
-     robot.spawn.heading = (robot.angle.*pi)./180; % THIS IS ALSO THE ISSUE DO NOT FORGET
+     disp("Hi!");
+     disp(robot.angie + "^");
+     disp(class(robot.angie));
+     if class(robot.angie) == "char"
+        robot.angie = str2double(robot.angie);
+     end
+     disp(class(robot.angie));
+     custom_theta = 2 * pi * (robot.angie/ 360);
+     disp(robot.spawn.heading + "$");%THIS IS THE ISSUE DO NOT FORGET
+     disp(custom_theta + "%");
+     robot.spawn.heading = custom_theta; % THIS IS ALSO THE ISSUE DO NOT FORGET
  end
 
     % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);

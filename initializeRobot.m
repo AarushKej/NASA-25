@@ -15,7 +15,7 @@ function [robot,plots] = initializeRobot(robot,plots,Inputs)
     robot.random = true;
     robot.set.spawn.x = 0;
     robot.set.spawn.y = 0;
-    robot.angle = 0;
+    robot.angie = 0;
     
     robot.kinematics.L=robot.dims(1)+(2*(robot.wheels.dims.back(1)/2));
     robot.kinematics.R=0
