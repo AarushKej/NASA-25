@@ -27,8 +27,14 @@ for i=1:imax
     robot.spawn.x=spawnX;
     robot.spawn.y=spawnY;
     robot.spawn.origin = [robot.spawn.x,robot.spawn.y];
+ if robot.random == true
     theta = 2 * pi * rand;
     robot.spawn.heading = theta;
+ else 
+     disp("Hi!")
+     disp(robot.spawn.heading)%THIS IS THE ISSUE DO NOT FORGET
+     robot.spawn.heading = (robot.angle.*pi)./180; % THIS IS ALSO THE ISSUE DO NOT FORGET
+ end
 
     % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);
     % robot.spawn.heading=robot.spawn.allctrpts{spawnLane}(startingidx,3);

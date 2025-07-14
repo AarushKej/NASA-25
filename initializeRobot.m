@@ -11,6 +11,11 @@ function [robot,plots] = initializeRobot(robot,plots,Inputs)
     robot.motor.VtoRPM=[3 120; 4.5 185; 6 250];
     robot.motor.loadfactor=.8;
     robot.motor.poly=polyfit(robot.motor.VtoRPM(:,1),robot.motor.loadfactor*robot.motor.VtoRPM(:,2),1);
+    robot.loop = 0;
+    robot.random = true;
+    robot.set.spawn.x = 0;
+    robot.set.spawn.y = 0;
+    robot.angle = 0;
     
     robot.kinematics.L=robot.dims(1)+(2*(robot.wheels.dims.back(1)/2));
     robot.kinematics.R=0
@@ -68,8 +73,12 @@ function [robot,plots] = initializeRobot(robot,plots,Inputs)
         [robot_body_all(:,2)' robot.wheels.backleft.y robot.wheels.backright.y  robot.sensor.linefollower.left.y...
         robot.sensor.linefollower.right.y]'];
     
+    if robot.random == true
+        robot=setSpawn(robot,plots,0,0,true);
+    else
+        robot=setSpawn(robot, plots, robot.set.spawn.x, robot.set.spawn.y, false);
+    end
 
-    robot=setSpawn(robot,plots,0,0,false);
     robot.center=robot.spawn.origin;
     robot.kinematics.axle=robot.spawn.axle;
     robot.kinematics.theta=robot.spawn.heading;
