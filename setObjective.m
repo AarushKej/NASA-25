@@ -13,6 +13,17 @@ if isrand
     yval =(rand - .5) * (plots.trackWidth-buffer);
 end
 
+if xval > ((plots.trackWidth - plots.trackWidth/2) - buffer)
+    xval = 0;
+elseif xval < ((-1*(plots.trackWidth - plots.trackWidth/2)) + buffer)
+    xval = 0;
+end
+if yval > ((plots.trackHeight - plots.trackHeight/2) - buffer)
+    yval = 0;
+elseif yval < ((-1*(plots.trackHeight - plots.trackHeight/2)) + buffer)
+    yval = 0;
+end
+
 maxattempt=10;
 if isfield(robot.obj,'coords')
     xval_init=robot.obj.coords(0);
