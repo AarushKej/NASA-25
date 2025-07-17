@@ -41,7 +41,8 @@ robot.wheels.dims.back=[1.6 6.4];
 
     plots.trackAx = app.UIAxes;
     [robot,plots]=createTerrain(robot,plots,inputs,app.UIAxes);
-    [robot, plots] = setObjective(robot,plots,X,Y,Rand);
+    [robot, plots] = setObjective(robot,plots,X,Y,Rand); 
+   
 
     plots.ptspacing=inputs.track.ptspacing;
     robot.crashed=false;
@@ -62,7 +63,7 @@ robot.wheels.dims.back=[1.6 6.4];
 
     robot.objDist = norm(robot.obj.coords - robot.center);
     robot.prevObjDist = robot.objDist;
-
+   
     % if plots.plotsensordata
     %     plots.mapping.plts.sensordata=plot(plots.mappingAx,plots.mapping.sensordata(1:robot.sensor.ultrasonic.Nsensors,1),...
     %         plots.mapping.sensordata(1:robot.sensor.ultrasonic.Nsensors,2),'k.');
