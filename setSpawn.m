@@ -7,6 +7,18 @@ else
     
 
 end
+
+if spawnX > (plots.trackWidth - plots.trackWidth/2)
+    spawnX = 0;
+elseif spawnX < (-1*(plots.trackWidth - plots.trackWidth/2))
+    spawnX = 0;
+end
+if spawnY > (plots.trackHeight - plots.trackHeight/2)
+    spawnY = 0;
+elseif spawnY < (-1*(plots.trackHeight - plots.trackHeight/2))
+    spawnY = 0;
+end
+
 rotz_fun=@(pt_x,pt_y,angle,ctr) ([cos(angle-pi/2) -sin(angle-pi/2);sin(angle-pi/2) cos(angle-pi/2)]*[pt_x;pt_y])'+ctr;
 
 maxattempt=10;
@@ -27,8 +39,16 @@ for i=1:imax
     robot.spawn.x=spawnX;
     robot.spawn.y=spawnY;
     robot.spawn.origin = [robot.spawn.x,robot.spawn.y];
+ if robot.random == true
     theta = 2 * pi * rand;
     robot.spawn.heading = theta;
+ else
+     if class(robot.angie) == "char"
+        robot.angie = str2double(robot.angie);
+     end
+     custom_theta = 2 * pi * (robot.angie/ 360);
+     robot.spawn.heading = custom_theta;
+ end
 
     % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);
     % robot.spawn.heading=robot.spawn.allctrpts{spawnLane}(startingidx,3);

@@ -1,0 +1,54 @@
+function [robot, plots]=setObjective(robot,plots,xval,yval,isrand)
+assert(islogical(isrand),'Random spawn must be ''true'' or ''false''.')
+buffer = 10;
+radius = 10;
+objColor = 'yellow';
+
+if isrand
+    xval =(rand-.5) * (plots.trackWidth - buffer);
+    yval =(rand - .5) * (plots.trackWidth-buffer);
+end
+
+maxattempt=10;
+if isfield(robot.obj,'factor')
+    xval_init=robot.obj.X;
+    yval_init=robot.obj.Y;
+    imax=maxattempt+1;
+else
+    imax=1;
+end
+
+for i=1:imax
+    if i==maxattempt+1
+        xval=xval_init;
+        yval=yval_init;
+    end
+    % startingidx=round(interp1([0 1],[1 length(robot.spawn.allctrpts{spawnLane}(:,1))],mod(spawnFact,1)));
+    robot.obj.x=xval;
+    robot.obj.y=yval;
+    robot.obj.coords = [robot.obj.x,robot.obj.y];
+    pos = [xval, yval, radius*2, radius*2];
+    robot.obj.poly = rectangle('Position',pos,'Curvature',[1 1],'FaceColor','yellow');
+
+    % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);
+    % robot.spawn.heading=robot.spawn.allctrpts{spawnLane}(startingidx,3);
+    % robot.obj.patchpts=cell2mat(arrayfun(@(px,py) rotz_fun(px,py,robot.obj.heading,robot.obj.origin),...
+    %     robot.obj.patchpts0(:,1),robot.obj.patchpts0(:,2),'UniformOutput',false));
+    % 
+    % robot.obj.axle=rotz_fun(0,-(robot.dims(2)/2)+(robot.wheels.dims.back(2)/2),robot.obj.heading,robot.obj.origin);
+    % 
+    if ~any(isinterior(plots.poly.track,robot.obj.patchpts))
+        break
+    elseif i==1 && ~isrand
+        warning('Obstacle location causes collision.')
+        break
+    elseif i==maxattempt+1 && isrand
+        warning('Could not locate random spawn location without collision. Defaulting to initial values.')
+    elseif isrand
+        xval =(rand-.5) * (plots.trackWidth - buffer);
+        yval =(rand - .5) * (plots.trackWidth-buffer);
+    end
+end
+
+
+end

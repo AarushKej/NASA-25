@@ -1,0 +1,73 @@
+function [robot, rewards] = evaluateReward(robot, action)
+    rewards = 0;
+
+    % State Rewards
+    if (robot.crashed)
+        rewards = -1000;
+        return
+    elseif (robot.arrived)
+        rewards = 1000;
+        return
+    end
+
+    % Obstacle Distance Rewards
+    distances = robot.sensor.ultrasonic.distances;
+    prevDistances = robot.sensor.prevDistances;
+    
+    % reward increasing front space
+    if prevDistances(3)<distances(3)&& distances(3)<20
+        % rewards= rewards+30;
+    end
+    % punish decreasing front space if below buffer
+    if prevDistances(3) > distances(3) && distances(3)<20
+            % rewards = rewards - 40;
+    end
+    
+    if distances(3) < 25
+        bufferReward = 20*(distances(3) - prevDistances(3));
+        disp(['Buffer Reward: ', num2str(bufferReward)]);
+        rewards = rewards + bufferReward;
+    end
+
+    % reward distance from obstacles
+    minDists = [min(distances(1), distances(5)), min(distances(2), distances(4)), distances(3)];
+    minDists = min(minDists, 70);
+    weights = [1 2 5];
+    distReward = 20 * log(.01*(dot(weights, minDists)));
+    % rewards = rewards+ distReward;
+
+    %distance reward is in the 40s normally, and it gets small/negative if
+    %too close to obstacles
+
+    % --------Objective Distance Rewards----------
+    % if(robot.objDist<robot.prevObjDist)
+    %     rewards = rewards + 40;
+    % elseif(robot.objDist>robot.prevObjDist)
+    %     rewards = rewards - 50;
+    % end
+
+    pause(0.2);
+    distanceReward = 5*(robot.prevObjDist - robot.objDist);
+    %varies from about -30 to 30
+    disp(['Distance Reward: ', num2str(distanceReward)]);
+    rewards = rewards + distanceReward;
+
+    robot.prevObjDist = robot.objDist;
+
+
+    % --------Objective Direction Rewards---------
+    headingReward = 50*(robot.headingError(1));  %<- cos(angle from objective)
+    % -40 punishment for heading away, 50 reward for heading toward obj
+    % 0 reward for going directly perpendicular to objective
+    
+    % if(isfield(robot, 'prevHeadingDiff') && (abs(robot.headingDiff) < abs(robot.prevHeadingDiff)))
+    %     rewards = rewards + 20;
+    % else
+    %     rewards = rewards - 30;
+    % end
+    % robot.prevHeadingDiff = robot.headingDiff;
+
+    rewards = rewards + headingReward;
+
+
+end

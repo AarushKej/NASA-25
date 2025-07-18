@@ -26,26 +26,27 @@ if any(isinterior(plots.poly.track,verts)) ||...
     robot.crashed = true;
 end
 
+robot.objDist = norm(robot.obj.coords - robot.center);
+
 % find the minimum distance any point of the robot is from the objective
-diffs = verts - repmat(robot.obj.coords, size(verts, 1), 1);
-dists = diffs(:,1).^2 + diffs(:, 2).^2;
-minDist = sqrt(min(dists));
-robot.distToObj = minDist;
-robot.thetaToObj = rad2deg(min(atan2(diffs(:,1), diffs(:,2))));
-
-
-
+% diffs = verts - repmat(robot.obj.coords, size(verts, 1), 1);
+% dists = diffs(:,1).^2 + diffs(:, 2).^2;
+% minDist = sqrt(min(dists));
 
 %vecnorm(verts-robot.obj.coords,2,2)
 
 % if the minimum distance is less than the radius of the obj, it intersects
 robot.arrived = false;
-if minDist < robot.obj.radius
+if robot.objDist < robot.obj.radius * 1.2
     robot.arrived = true;
 end
 
-if robot.crashed || robot.arrived
+if robot.crashed
     plots.robotpatch.patch.CData(1,1,:)=plots.robotpatch.colvec(1,8,:);
+    robot.kinematics.V.left=0;
+    robot.kinematics.V.right=0;
+elseif robot.arrived
+    plots.robotpatch.patch.CData(1,1,:)=[0, 1, 0];
     robot.kinematics.V.left=0;
     robot.kinematics.V.right=0;
 else
@@ -56,6 +57,7 @@ else
     plots.robotpatch.patch.CData(1,1,:)=plots.robotpatch.colvec(1,1,:);
     robot=updateLineFollower(robot,plots);
     [robot,plots]=sensorPlotting(robot,plots);
+    [robot,plots]=lidarPlotting(robot,plots);
 end
 
 end

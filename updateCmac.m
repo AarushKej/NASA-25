@@ -2,52 +2,36 @@
 % CMAC Approximation of a q function
 % -------------------------------------------------------------------------
 function cmac =updateCmac(app, a, pred, reward)
-    cmac = app.cmac;
+cmac = app.cmac;
 
-    futureQs= zeros(length(app.robot.actions),1);
-    for i = 1:length(futureQs)
-        [~, futureQs(i)] = cmacModel(app, i);  % Predict Q(s', a2)
-    end
-    reward = reward + app.sim.gamma * max(futureQs);
+% get future expected q values based on the action just taken
+[~, futureQs] = cmacModel(app);
 
-    % tracking error
-    error=reward-pred;
+                % discount factor
+reward = reward + app.cmac.gamma * max(futureQs);
 
-    ad = squeeze(cmac.adMatrix(a,:,:));
-    s = squeeze(cmac.sMatrix(a,:,:));
+% tracking error
+error=reward-pred;
 
-    
-
-    unique_ad = unique(ad(:)); % turn into 1d array of unique addresses
-    delta = cmac.xite*error/length(unique_ad);
-
-    % weight adjustment (learning algorithm)
-    % weight update using gradient descent
-
-    for i = 1:length(unique_ad)
-        j = unique_ad(i);
-        cmac.d_w(a,j) = delta;
-        cmac.wMatrix(a,j) =cmac.w_1(a,j)+cmac.d_w(a,j) + cmac.alfa*(cmac.w_1(a,j) - cmac.w_2(a,j));
-
-    end
-    
-    % Old code that did not exclude duplicate addresses
-    % for d = 1:1:cmac.numInputs
-    %     for i=1:1:cmac.c
-    %         %ad(d,i)=mod(s(d,i),cmac.N)+1;
-    %         j=ad(d,i);
-    %         cmac.d_w(a, j)=cmac.xite*error/(cmac.numInputs * cmac.c);
-    %         cmac.wMatrix(a, j)=cmac.w_1(a,j)+cmac.d_w(a,j) + cmac.alfa*(cmac.w_1(a,j) - cmac.w_2(a,j));
-    %     end
-    % end
+% ad = squeeze(cmac.adMatrix(a,:,:));
+% s = squeeze(cmac.sMatrix(a,:,:));
 
 
-    % iteration update
-    % Parameters Update %
-    cmac.w_2=cmac.w_1;cmac.w_1=cmac.wMatrix;
-    cmac.y_1(a)=reward;
-    cmac.u_1(a) = pred;
+unique_ad = unique(cmac.adMatrix(a,:,:)); % turn into 1d array of unique addresses
+delta = cmac.alpha*error/length(unique_ad);
 
-    cmac.adMatrix(a,:,:) = ad;
-    cmac.sMatrix(a,:,:) = s;
+% weight update using gradient descent w/ momentum
+
+j = unique_ad(:);
+cmac.d_w(a,j) = delta;
+cmac.wMatrix(a,j) =cmac.w_1(a,j)+cmac.d_w(a,j) + cmac.beta*(cmac.w_1(a,j) - cmac.w_2(a,j));
+
+% iteration update
+% Parameters Update %
+cmac.w_2=cmac.w_1;cmac.w_1=cmac.wMatrix;
+cmac.y_1(a)=reward;
+cmac.u_1(a) = pred;
+
+% cmac.adMatrix(a,:,:) = ad;
+% cmac.sMatrix(a,:,:) = s;
 end

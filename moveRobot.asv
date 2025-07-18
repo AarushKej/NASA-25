@@ -30,16 +30,8 @@ end
 diffs = verts - repmat(robot.obj.coords, size(verts, 1), 1);
 dists = diffs(:,1).^2 + diffs(:, 2).^2;
 minDist = sqrt(min(dists));
-robot.distToObj = minDist;
-robot.thetaToObj = rad2deg(min(atan(diffs(:,2)/diffs(:,1))));
 
-disp("distance: " + robot.distToObj);
-disp("angle: " + robot.thetaToObj);
-
-
-%vecnorm(verts-robot.obj.coords,2,2)
-
-% if the minimum distance is less than the radius of the obj, it intersects
+% if the minimum distance is less than the radius of the obj, it's 
 robot.arrived = false;
 if minDist < robot.obj.radius
     robot.arrived = true;

@@ -1,48 +1,61 @@
-function rewards = evaluateReward(robot, action)
-    rewards = 0;
-    if (robot.crashed)
-        rewards = -1000;
-        return
-    end
-    distances = robot.sensor.ultrasonic.distances;
-    prev = robot.sensor.prevDistances;
-    
-    % function transforms distances to be better balanced rewards
-    f=@(x) .5*log(x);
-    weight = [1 2 5 2 1];
-    distReward = dot(f(min(distances,100)), weight);
-    % disp(distReward);
-    rewards = rewards+ distReward;
+function [robot, rewards] = evaluateReward(robot, action)
+rewards = 0;
+
+% State Rewards
+if (robot.crashed)
+    rewards = -1200;
+    return
+elseif (robot.arrived)
+    rewards = 1200;
+    return
+end
+
+% Obstacle Distance Rewards
+distances = robot.sensor.ultrasonic.distances;
+prevDistances = robot.sensor.prevDistances;
 
 
-    % distFromObj = sqrt((robot.obj.coords(0)-robot.center(0))^2 + (robot.obj.coords(1) - robot.center(1))^2);
+% when uncomfortably close, reward/punish changes in buffer
+if distances(3) < 25
+    bufferReward = 6*(distances(3) - prevDistances(3));
+    rewards = rewards + max(min(bufferReward, 50),-50);
+end
 
-    % rewards = rewards + -10*log(distFromObj);
-    
-    % array contains min side distance, min diagonal distance, front distance
-    %minDistances = [min(distances(1),distances(5)),min(distances(2),distances(4)),distances(3)];
-    %altF = @(x) 20*log(x);
-    %altWeight = [1 1.5 3];
-    %rewards = rewards + dot(altF(minDistances),altWeight);
+% reward distance from obstacles
+% minDists = [min(distances(1), distances(5)), min(distances(2), distances(4)), distances(3)];
+% minDists = min(minDists, 70);
+% weights = [1 2 5];
+% distReward = 20 * log(.01*(dot(weights, minDists)));
+% rewards = rewards+ distReward;
 
-    rewards = rewards + 5 * dot(weight, (distances - prev));
+%distance reward is in the 40s normally, and it gets small/negative if
+%too close to obstacles
 
-    rewards = rewards - 500/(.2*min(distances(1),distances(5)));
+% --------Objective Distance Rewards----------
 
-    % Give rewards based on the suggested action
-    if(action == "forward" && distances(3) > 20)
-        % was -50
-        rewards = rewards +40;
-        
-    end
+distanceReward = 7*(robot.prevObjDist - robot.objDist);
+%varies from about -45 to 45
+%disp(['Distance Reward: ', num2str(distanceReward)]);
+rewards = rewards + distanceReward;
 
-    if robot.sensor.prevDistances(3)<distances(3)
-        rewards= rewards+20;
-    end
-    if robot.sensor.prevDistances(3) > distances(3) && distances(3)<20
-            rewards = rewards - 20;
-    end
-    if action == "left" || action == "right"
-        rewards = rewards - 20;
-    end
+robot.prevObjDist = robot.objDist;
+
+
+% --------Objective Direction Rewards---------
+headingReward = 60*(robot.headingError(1));  %<- cos(angle from objective)
+% -40 punishment for heading away, 50 reward for heading toward obj
+% 0 reward for going directly perpendicular to objective
+
+rewards = rewards + headingReward;
+
+if(isfield(robot, 'prevHeadingDiff'))
+    headingChange = 40*(abs(robot.prevHeadingDiff) - abs(robot.headingDiff));
+    % basically +20 for turning closer, -20 for turning farther
+    %disp(['Heading Change: ', num2str(headingChange)]);
+    rewards = rewards + headingChange;
+end
+robot.prevHeadingDiff = robot.headingDiff;
+
+
+rewards = rewards - 60;
 end
