@@ -45,8 +45,8 @@ for i=1:imax
     robot.obj.x=xval;
     robot.obj.y=yval;
     robot.obj.coords = [robot.obj.x,robot.obj.y];
-    pos = [xval-radius, yval-radius, radius*2, radius*2];
-    robot.obj.poly = rectangle(plots.trackAx, "Position", pos, "Curvature", [1 1], "FaceColor", objColor);
+    %pos = [xval-radius, yval-radius, radius*2, radius*2];
+    %robot.obj.poly = rectangle(plots.trackAx, 'Position', pos, 'Curvature', [1 1], 'FaceColor', objColor);
   
     % robot.spawn.origin=robot.spawn.allctrpts{spawnLane}(startingidx,1:2);
     % robot.spawn.heading=robot.spawn.allctrpts{spawnLane}(startingidx,3);
@@ -68,8 +68,17 @@ for i=1:imax
     % end
 end
 
-% plots.obj=patch(plots.trackAx,nan(4,1),nan(4,1),'b');
-% th=linspace(0,2*pi,360)';
-% r=30;
-% plots.objpts0=r*[cos(th) sin(th)];
+try
+    delete(plots.objective);
+catch e
+    disp(e);
+end
+
+plots.objective=patch(plots.trackAx,nan(4,1),nan(4,1),objColor);
+theta=linspace(0,2*pi,360)';
+plots.objpts0=radius*[cos(theta) sin(theta)];
+
+plots.objective.XData=plots.objpts0(:,1)+xval;
+plots.objective.YData=plots.objpts0(:,2)+yval;
+
 end
