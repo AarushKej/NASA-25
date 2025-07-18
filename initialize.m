@@ -36,6 +36,19 @@ robot.wheels.dims.back=[1.6 6.4];
     robot.sensor.ultrasonic.Nsensors=length(robot.sensor.ultrasonic.thetas);
     robot.sensor.ultrasonic.sensorpts=zeros(length(robot.sensor.ultrasonic.thetas),4);
     robot.sensor.ultrasonic.collisiondist=inputs.ultrasonic_collisiondist;
+    robot.sensor.lidar.enable = true;
+    robot.sensor.lidar.n = inputs.lidar.n;
+    robot.sensor.lidar.distance = inputs.lidar.distance;
+    robot.sensor.lidar.angles = inputs.lidar.angles;
+    robot.sensor.lidar.showrays = inputs.lidar.showrays;
+    robot.sensor.lidar.raycolor = inputs.lidar.raycolor;
+    robot.sensor.lidar.raylinewidth = inputs.lidar.raylinewidth;
+    robot.sensor.lidar.raystyle = inputs.lidar.raystyle;
+
+    robot.sensor.lidar.distances = zeros(inputs.lidar.n, 1);
+    robot.sensor.lidar.endpoints = zeros(inputs.lidar.n, 2);
+    robot.sensor.lidar.XData = [];
+    robot.sensor.lidar.YData = [];
 
     robot.obj=struct();
 

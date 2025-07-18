@@ -57,6 +57,7 @@ else
     plots.robotpatch.patch.CData(1,1,:)=plots.robotpatch.colvec(1,1,:);
     robot=updateLineFollower(robot,plots);
     [robot,plots]=sensorPlotting(robot,plots);
+    [robot,plots]=lidarPlotting(robot,plots);
 end
 
 end
