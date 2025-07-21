@@ -1,0 +1,111 @@
+function [robot,plots] = lidarPlotting(robot,plots)
+
+allObs = plots.poly.track;
+nanRows = isnan(allObs.Vertices(:,1));
+idx = [0; find(nanRows); size(allObs.Vertices,1)+1];
+allShapes = {};
+for i = 1:length(idx)-1
+    startIdx = idx(i)+1;
+    endIdx = idx(i+1)-1;
+    if startIdx <= endIdx
+        allShapes{end+1} = allObs.Vertices(startIdx:endIdx, :);
+    end
+end
+
+edge_starts = [];
+edge_ends = [];
+for s = 1:length(allShapes)
+    verts = allShapes{s};
+    edge_starts = [edge_starts; verts];
+    edge_ends = [edge_ends; verts([2:end,1], :)];
+end
+
+robotX = robot.center(1);
+robotY = robot.center(2);
+N = robot.sensor.lidar.n;
+maxDistance = robot.sensor.lidar.distance;
+theta = robot.kinematics.theta - pi/2;
+rayAngles = robot.sensor.lidar.angles + theta;
+
+distances = maxDistance * ones(N, 1);
+endpoints = zeros(N, 2);
+
+% Cast each ray
+for i = 1:N
+    rayAngle = rayAngles(i);
+    rayDir = [cos(rayAngle), sin(rayAngle)];
+    
+    % Ray starts from robot center (keeping it simple like original)
+    rayStart = [robotX, robotY];
+    rayEnd = rayStart + maxDistance * rayDir;
+    
+    minDist = maxDistance;
+    hitPoint = rayEnd;
+    
+    % Check intersection with each edge
+    for j = 1:size(edge_starts, 1)
+        segStart = edge_starts(j, :);
+        segEnd = edge_ends(j, :);
+        
+        % Line intersection calculation
+        x1 = rayStart(1); y1 = rayStart(2);
+        x2 = rayEnd(1); y2 = rayEnd(2);
+        x3 = segStart(1); y3 = segStart(2);
+        x4 = segEnd(1); y4 = segEnd(2);
+        
+        denom = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+        
+        if abs(denom) > 1e-10  % Lines are not parallel
+            t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / denom;
+            u = -((x1-x2)*(y1-y3) - (y1-y2)*(x1-x3)) / denom;
+            
+            % Check if intersection is within both line segments
+            if t >= 0 && t <= 1 && u >= 0 && u <= 1
+                intersect = [x1 + t*(x2-x1), y1 + t*(y2-y1)];
+                dist = norm(intersect - rayStart);
+                
+                if dist < minDist
+                    minDist = dist;
+                    hitPoint = intersect;
+                end
+            end
+        end
+    end
+    
+    distances(i) = minDist;
+    endpoints(i, :) = hitPoint;
+end
+
+% Store results
+robot.sensor.lidar.distances = distances;
+robot.sensor.lidar.endpoints = endpoints;
+
+% Prepare plotting data
+xData = [];
+yData = [];
+for i = 1:N
+    xData = [xData, robotX, endpoints(i,1), NaN];
+    yData = [yData, robotY, endpoints(i,2), NaN];
+end
+
+robot.sensor.lidar.XData = xData;
+robot.sensor.lidar.YData = yData;
+
+% Remove hit points plot if it exists
+if isfield(robot.sensor.lidar, 'hitPtsPlot') && isvalid(robot.sensor.lidar.hitPtsPlot)
+    delete(robot.sensor.lidar.hitPtsPlot);
+    robot.sensor.lidar = rmfield(robot.sensor.lidar, 'hitPtsPlot');
+end
+
+% Plot rays
+if isfield(robot.sensor.lidar, 'rayPlot') && isvalid(robot.sensor.lidar.rayPlot)
+    set(robot.sensor.lidar.rayPlot, 'XData', xData, 'YData', yData);
+else
+    hold(plots.trackAx, 'on');
+    robot.sensor.lidar.rayPlot = plot(plots.trackAx, xData, yData, ...
+        'Color', robot.sensor.lidar.raycolor, ...
+        'LineWidth', robot.sensor.lidar.raylinewidth, ...
+        'LineStyle', robot.sensor.lidar.raystyle);
+end
+
+end

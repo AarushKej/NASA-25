@@ -8,12 +8,12 @@ inputs.running = false;
 
 inputs.lidar.enable = true;
 inputs.lidar.showrays = true;
-inputs.lidar.raycolor = [0 1 0];
+inputs.lidar.raycolor = 'r';
 inputs.lidar.raylinewidth = 0.5;
 inputs.lidar.raystyle = '-';
 inputs.lidar.n = 10;
 inputs.lidar.distance = 1000;
-inputs.lidar.startAngle = 0;
+inputs.lidar.startAngle = pi/4;
 inputs.lidar.endAngle = 2*pi;
 
 inputs.lidar.angles = linspace(inputs.lidar.startAngle, inputs.lidar.endAngle, inputs.lidar.n);

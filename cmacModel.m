@@ -67,5 +67,3 @@ for a = 1:1:app.robot.numActions
     qvals(a) = sum(cmac.wMatrix(a, unique_ad)) / length(unique_ad);
 end
 end
-
-
