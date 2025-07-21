@@ -29,7 +29,8 @@ mouseY = robot.center(2);
 
 N = robot.sensor.lidar.n;
 distance = robot.sensor.lidar.distance;
-angles = robot.sensor.lidar.angles';
+theta = robot.kinematics.theta - pi/2;  % Robot's current heading angle
+angles = mod(robot.sensor.lidar.angles' + theta, 2*pi);
 
 M = size(edge_starts, 1);  
 ray_dirs = [cos(angles), sin(angles)];  
@@ -117,10 +118,10 @@ end
 
 
 % Plot lines
-% if isfield(robot.sensor.lidar, "rayPlot") && isvalid(robot.sensor.lidar.rayPlot)
-%     set(robot.sensor.lidar.rayPlot, 'XData', xLinesFlat, 'YData', yLinesFlat);
-% else
-%     hold(plots.trackAx, 'on');
-%     robot.sensor.lidar.rayPlot = plot(plots.trackAx, xLinesFlat, yLinesFlat, 'r-', 'LineWidth', 0.000001);
-% end
+if isfield(robot.sensor.lidar, "rayPlot") && isvalid(robot.sensor.lidar.rayPlot)
+    set(robot.sensor.lidar.rayPlot, 'XData', xLinesFlat, 'YData', yLinesFlat);
+else
+    hold(plots.trackAx, 'on');
+    robot.sensor.lidar.rayPlot = plot(plots.trackAx, xLinesFlat, yLinesFlat, 'r-', 'LineWidth', 0.000001);
+end
 

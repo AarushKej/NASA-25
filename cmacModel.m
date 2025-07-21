@@ -8,7 +8,7 @@ cmac= app.cmac;
 cmac.pred = 0;
 
 % System Input (Input layer)
-u = app.robot.sensor.ultrasonic.distances;
+u = app.robot.sensor.lidar.distances;
 
 % Create vector from robot to objective
 objX = app.robot.obj.x - app.robot.center(1);
