@@ -8,7 +8,7 @@ inputs.running = false;
 
 inputs.lidar.enable = true;
 inputs.lidar.showrays = true;
-inputs.lidar.raycolor = [0 1 0];
+inputs.lidar.raycolor = 'r';
 inputs.lidar.raylinewidth = 0.5;
 inputs.lidar.raystyle = '-';
 inputs.lidar.n = 10;

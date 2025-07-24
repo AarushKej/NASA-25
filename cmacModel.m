@@ -36,7 +36,6 @@ cmac.d_w= zeros(numActions, cmac.N);
 % System Input (Input layer)
 u = app.robot.sensor.lidar.distances;
 
-
 % Create vector from robot to objective
 objX = app.robot.obj.x - app.robot.center(1);
 objY = app.robot.obj.y - app.robot.center(2);
@@ -93,5 +92,3 @@ for a = 1:1:app.robot.numActions
     qvals(a) = sum(cmac.wMatrix(a, unique_ad)) / length(unique_ad);
 end
 end
-
-

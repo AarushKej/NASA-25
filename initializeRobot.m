@@ -59,6 +59,7 @@ end
 
 robot.sensor.lidar.hitPtsPlot = plot(plots.trackAx, nan, nan, 'r.', 'linewidth', 0.1);
 
+
 robot_body=[robot.body.x' robot.body.y'];
 robot_body=vertcat(robot_body,robot_body(1,:));
 ptdist=5;
@@ -103,8 +104,12 @@ plots.robotpatch.colvec(1,8,:)=col(5,:);
 plots.robotpatch.faces=nan(5,length(robot_body_all(:,1)));
 plots.robotpatch.faces(1,:)=1:length(robot_body_all(:,1));
 plots.robotpatch.faces(2:5,1:4)=reshape(1:16,[4,4])'+length(robot_body_all(:,1));
-plots.robotpatch.patch=patch(plots.trackAx,'Faces',plots.robotpatch.faces,'Vertices',robot.spawn.patchpts,...
-    'FaceColor','flat','EdgeColor','k','CData',plots.robotpatch.colvec(1,1:5,:));
+plots.robotpatch.patch = patch(plots.trackAx, 'Faces', plots.robotpatch.faces, ...
+    'Vertices', robot.spawn.patchpts, ...
+    'FaceColor', 'flat', ...
+    'EdgeColor', 'k', ...
+    'CData', plots.robotpatch.colvec(1,1:5,:));
+robot.plotHandle = plots.robotpatch.patch;
 plots.mapping.LFdata=[];
 robot=updateLineFollower(robot,plots);
 robot.sensor.ultrasonic.distances=[];
