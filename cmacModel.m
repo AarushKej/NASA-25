@@ -7,8 +7,35 @@ cmac= app.cmac;
 % Initialize arrays with zeros
 cmac.pred = 0;
 
+cmac.inputRanges = repmat([0 app.robot.cmac.rangeMax], app.robot.sensor.lidar.n, 1);
+% max distance from objective is norm of track dims
+cmac.inputRanges = [cmac.inputRanges;[0, norm([app.robot.track.wall1_length, app.robot.track.wall2_length])]];
+% min/max difference in heading from robot to obstacle
+cmac.inputRanges= [cmac.inputRanges;[-1, 1]];
+cmac.inputRanges= [cmac.inputRanges;[-1, 1]];
+
+cmac.numInputs = app.robot.sensor.lidar.n + 3;
+
+cmac.inputBins = zeros(1, cmac.numInputs);
+cmac.inputBins(1:app.robot.sensor.lidar.n) = cmac.sensorRes;
+cmac.inputBins(app.robot.sensor.lidar.n + 1) = cmac.distanceRes;
+cmac.inputBins(app.robot.sensor.lidar.n + 2: app.robot.sensor.lidar.n + 3) = cmac.headingRes;
+
+numActions = 3;
+
+cmac.wMatrix = zeros(numActions, cmac.N);
+cmac.adMatrix = zeros(numActions, cmac.numInputs, cmac.c);
+cmac.sMatrix = zeros(numActions, cmac.numInputs, cmac.c);
+
+cmac.w_1 = zeros(numActions, cmac.N);
+cmac.w_2= zeros(numActions, cmac.N);
+cmac.d_w= zeros(numActions, cmac.N);
+
+
+
 % System Input (Input layer)
-u = app.robot.sensor.ultrasonic.distances;
+u = app.robot.sensor.lidar.distances;
+
 
 % Create vector from robot to objective
 objX = app.robot.obj.x - app.robot.center(1);
@@ -44,7 +71,6 @@ uMax = cmac.inputRanges(:,2);
 
 %normalize input vals
 normalU = (u - uMin)./(uMax-uMin);
-
 %quantize inputs into bins
 binnedU = round(normalU .* cmac.inputBins');
 

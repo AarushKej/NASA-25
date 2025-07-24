@@ -28,8 +28,13 @@ mouseX = robot.center(1);
 mouseY = robot.center(2);
 
 N = robot.sensor.lidar.n;
+
+robot.sensor.lidar.angles = linspace(robot.sensor.lidar.startAngle, robot.sensor.lidar.endAngle, robot.sensor.lidar.n);
+robot.sensor.lidar.distances = zeros(N, 1);
+robot.sensor.lidar.endpoints = zeros(N, 2);
 distance = robot.sensor.lidar.distance;
-angles = robot.sensor.lidar.angles';
+theta = robot.kinematics.theta - pi/2;  % Robot's current heading angle
+angles = mod(robot.sensor.lidar.angles' + theta, 2*pi);
 
 M = size(edge_starts, 1);  
 ray_dirs = [cos(angles), sin(angles)];  
@@ -108,19 +113,22 @@ robot.sensor.lidar.YData = yLinesFlat;
 
 
 
-if isfield(robot.sensor.lidar, "hitPtsPlot") && isvalid(robot.sensor.lidar.hitPtsPlot)
-    set(robot.sensor.lidar.hitPtsPlot, 'XData', xHits, 'YData', yHits);
+
+% Plot lines
+
+if isfield(robot.sensor.lidar, "rayPlot") && isvalid(robot.sensor.lidar.rayPlot)
+    set(robot.sensor.lidar.rayPlot, 'XData', xLinesFlat, 'YData', yLinesFlat, 'Visible', robot.sensor.lidar.enabled);
 else
     hold(plots.trackAx, 'on');
-    robot.sensor.lidar.hitPtsPlot = plot(plots.trackAx, xHits, yHits, 'r.', 'MarkerSize', 8);
+    robot.sensor.lidar.rayPlot = plot(plots.trackAx, xLinesFlat, yLinesFlat, 'r-', 'LineWidth', 0.000001);
 end
 
 
-% Plot lines
-% if isfield(robot.sensor.lidar, "rayPlot") && isvalid(robot.sensor.lidar.rayPlot)
-%     set(robot.sensor.lidar.rayPlot, 'XData', xLinesFlat, 'YData', yLinesFlat);
-% else
-%     hold(plots.trackAx, 'on');
-%     robot.sensor.lidar.rayPlot = plot(plots.trackAx, xLinesFlat, yLinesFlat, 'r-', 'LineWidth', 0.000001);
-% end
+if isfield(robot.sensor.lidar, "hitPtsPlot") && isvalid(robot.sensor.lidar.hitPtsPlot)
+    set(robot.sensor.lidar.hitPtsPlot, 'XData', xHits, 'YData', yHits, 'Visible', robot.sensor.lidar.visible);
+else
+ hold(plots.trackAx, 'on');
+ robot.sensor.lidar.hitPtsPlot = plot(plots.trackAx, xHits, yHits, 'r.', 'MarkerSize', 8);
 
+end
+end

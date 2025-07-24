@@ -70,8 +70,6 @@ end
 
 try
     delete(plots.objective);
-catch e
-    disp(e);
 end
 
 plots.objective=patch(plots.trackAx,nan(4,1),nan(4,1),objColor);
