@@ -93,6 +93,7 @@ else
     robot.sensor.lidar.hitPtsPlot = plot(plots.trackAx, xHits, yHits, 'r.', 'MarkerSize', 8);
 end
 
+
 if isfield(robot.sensor.lidar, "rayPlot") && isvalid(robot.sensor.lidar.rayPlot)
     set(robot.sensor.lidar.rayPlot, 'XData', xLinesFlat, 'YData', yLinesFlat);
 else
@@ -102,3 +103,4 @@ end
 
 uistack(robot.plotHandle, 'top');
 end
+
