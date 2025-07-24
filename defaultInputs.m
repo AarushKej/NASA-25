@@ -8,12 +8,17 @@ inputs.running = false;
 
 inputs.lidar.enable = true;
 inputs.lidar.showrays = true;
-inputs.lidar.raycolor = [0 1 0];
+inputs.lidar.raycolor = 'r';
 inputs.lidar.raylinewidth = 0.5;
 inputs.lidar.raystyle = '-';
-inputs.lidar.n = 360;
+inputs.lidar.n = 10;
 inputs.lidar.distance = 1000;
-inputs.lidar.angles = linspace(0, 2*pi, inputs.lidar.n);
+inputs.lidar.startAngle = 0;
+inputs.lidar.endAngle = 2*pi;
+inputs.lidar.enabled = "on";
+inputs.lidar.visible = "off";
+
+inputs.lidar.angles = linspace(inputs.lidar.startAngle, inputs.lidar.endAngle, inputs.lidar.n);
 
 % Robot Parameters
 inputs.robot.length = 17;
@@ -46,24 +51,24 @@ inputs.cmac.alpha = 0.07;
 inputs.cmac.gamma = 0.92;
 inputs.cmac.beta = 0.3;
 inputs.cmac.c = 3; % inputs are generalized to c adjacent cells
-inputs.cmac.numInputs = 8;
+inputs.cmac.numInputs = inputs.lidar.n + 3;
 
 numActions = 3;
 
 % set number of bins for each type of input
 inputs.cmac.sensorRes = 5;
 inputs.cmac.headingRes = 12; 
-inputs.cmac.distanceRes = 4;
+inputs.cmac.distanceRes = 4; 
 
 inputs.cmac.inputBins = zeros(1, inputs.cmac.numInputs);
-inputs.cmac.inputBins(1:5) = inputs.cmac.sensorRes;
-inputs.cmac.inputBins(6) = inputs.cmac.distanceRes;
-inputs.cmac.inputBins(7:8) = inputs.cmac.headingRes;
+inputs.cmac.inputBins(1:inputs.lidar.n) = inputs.cmac.sensorRes;
+inputs.cmac.inputBins(inputs.lidar.n + 1) = inputs.cmac.distanceRes;
+inputs.cmac.inputBins(inputs.lidar.n + 2: inputs.lidar.n + 3) = inputs.cmac.headingRes;
 
 % sensor range limit
 inputs.cmac.rangeMax = 70;
 
-inputs.cmac.inputRanges = repmat([0 inputs.cmac.rangeMax], 5, 1);
+inputs.cmac.inputRanges = repmat([0 inputs.cmac.rangeMax], inputs.lidar.n, 1);
 % max distance from objective is norm of track dims
 inputs.cmac.inputRanges = [inputs.cmac.inputRanges;[0, norm([inputs.track.wall1_length, inputs.track.wall2_length])]];
 % min/max difference in heading from robot to obstacle

@@ -44,6 +44,15 @@ robot.wheels.dims.back=[1.6 6.4];
     robot.sensor.lidar.raycolor = inputs.lidar.raycolor;
     robot.sensor.lidar.raylinewidth = inputs.lidar.raylinewidth;
     robot.sensor.lidar.raystyle = inputs.lidar.raystyle;
+    robot.sensor.lidar.startAngle = inputs.lidar.startAngle;
+    robot.sensor.lidar.endAngle = inputs.lidar.endAngle;
+    robot.cmac.rangeMax = inputs.cmac.rangeMax;
+    robot.sensor.lidar.enabled = inputs.lidar.enabled;
+    robot.sensor.lidar.visible = inputs.lidar.visible;
+    
+ 
+    robot.track.wall1_length = inputs.track.wall1_length;
+    robot.track.wall2_length = inputs.track.wall2_length;
 
     robot.sensor.lidar.distances = zeros(inputs.lidar.n, 1);
     robot.sensor.lidar.endpoints = zeros(inputs.lidar.n, 2);

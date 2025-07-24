@@ -1,5 +1,6 @@
 function plots=updatePlot(robot,plots)
 limitoffset=(plots.trackWidth/2)*(1+plots.display.zoom);
+[robot, plots] = lidarPlotting(robot, plots);
 if plots.plotsensordata
     if ~isempty(plots.mapping.sensordata)
         datatemp=unique([[plots.mapping.plts.sensordata.XData plots.mapping.sensordata(:,1)']'...
