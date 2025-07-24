@@ -114,4 +114,6 @@ else
  robot.sensor.lidar.hitPtsPlot = plot(plots.trackAx, xHits, yHits, 'r.', 'MarkerSize', 8);
 
 end
+
+uistack(robot.plotHandle, 'top');
 end
