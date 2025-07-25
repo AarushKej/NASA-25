@@ -1,18 +1,18 @@
 function plots = setObs(plots, obsSet)
-    % Ensure basic fields
+    % --------- sanity / existence checks ----------
     if ~isfield(plots, 'poly');            plots.poly = struct(); end
     if ~isfield(plots.poly, 'obsSets');    plots.poly.obsSets = {}; end
-    if ~isfield(plots, 'ax') || isempty(plots.ax) || ~isgraphics(plots.ax)
+    if ~isfield(plots, 'ax') || isempty(plots.ax) || ~any(isgraphics(plots.ax))
         error('plots.ax must be a valid axes handle (e.g., app.UIAxes). Set plots.ax = app.UIAxes before calling setObs.');
     end
     if numel(plots.poly.obsSets) < obsSet
         plots.poly.obsSets{obsSet} = polyshape.empty;
     end
 
-    % Helper to validate handle
+    % helper to check if graphics object is valid
     isValid = @(h) ~isempty(h) && isgraphics(h);
 
-    % If no obstacles, clear plot
+    % --------- empty set: clear safely and return ----------
     if isempty(plots.poly.obsSets{obsSet})
         if isfield(plots.poly, 'obsplt') && isValid(plots.poly.obsplt)
             delete(plots.poly.obsplt);
@@ -27,18 +27,25 @@ function plots = setObs(plots, obsSet)
         return;
     end
 
-    % Merge all obstacles into a single shape for drawing
+    % --------- normal path: union + (re)draw ----------
     allobs = union(plots.poly.obsSets{obsSet});
-    if isfield(plots.poly, 'obsplt') && isValid(plots.poly.obsplt)
-        % Update existing patch
-        plots.poly.obsplt.Shape = allobs;
-    else
-        % Create a new patch
-        plots.poly.obsplt = plot(plots.ax, allobs, ...
-            'FaceColor', [1 0 0], 'FaceAlpha', 0.2, 'EdgeColor', 'k');
+
+    h = [];
+    if isfield(plots.poly, 'obsplt')
+        h = plots.poly.obsplt;
     end
 
-    % Update track
+    if isValid(h)
+        plots.poly.obsplt.Shape = allobs;
+        plots.poly.obsplt.FaceColor = [140, 209, 255]/255;  % light blue
+        plots.poly.obsplt.EdgeColor = 'none';               % no border
+    else
+        plots.poly.obsplt = plot(plots.ax, allobs, ...
+            'FaceColor', [140, 209, 255]/255, ...
+            'FaceAlpha', 0.4, ...
+            'EdgeColor', 'none');
+    end
+
     if isfield(plots.poly, 'walls')
         plots.poly.track = union(plots.poly.walls, allobs);
     else
