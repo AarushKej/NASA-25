@@ -47,6 +47,8 @@ end
 % Remove previous objective if it exists
 try
     delete(plots.objective);
+catch e
+    disp(e);
 end
 
 % ----- Create star shape -----
