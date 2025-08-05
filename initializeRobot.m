@@ -1,4 +1,4 @@
-function [robot,plots] = initializeRobot(robot,plots,Inputs)
+function [robot,plots] = initializeRobot(robot,plots, Inputs)
 robot.plot.closed=false;
 robot.motor.power.right=0;
 robot.motor.power.left=0;
